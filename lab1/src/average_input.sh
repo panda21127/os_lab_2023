@@ -1,4 +1,5 @@
 #!/bin/bash
+#$ sh ./average_input.sh < numbers.txt
 for i in `seq 150`; do od -vAn -N2 -tu2 < /dev/random; done > numbers.txt
 count=0
 sum=0
