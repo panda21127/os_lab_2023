@@ -9,12 +9,12 @@ int main ()
     for(int i=0;i<6;i++){
         pid_t child_pid = fork ();
         if (child_pid == 0) {
-            sleep (5);
-            count++;
-        }
-        else {
             printf("GoodBye my son");
             exit (0);
+        }
+        else {
+            sleep (5);
+            count++;
         }
     }
     printf("No, father %d",count);
