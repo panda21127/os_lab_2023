@@ -22,16 +22,24 @@ struct MultyArgs {
 
 int Multy(const struct MultyArgs *args) {
   pthread_mutex_lock(&mut);
-  int sum = 1;
+  uint64_t ans = 1;
   // TODO: your code here 
+  int cringe;
   for(int i=args->begin;i<args->end;i++ ){
-    if (args->array[i] % args->mod == 0) args->array[i] = 1;
-    sum*=args->array[i] % args->mod;
+    cringe=i;
+    if (cringe % args->mod == 0) cringe = 1;
+    ans *= cringe % args->mod;
+    if (ans % args->mod == 0) ans = 1;
   }
-  //sum = sum % args->mod;
-  printf("part fact  %d\n", sum);
+  if (ans % args->mod == 0){
+    ans = 1;
+    }
+    else{
+      ans = ans % args->mod;
+    }
+  printf("part fact  %ld\n", ans);
   pthread_mutex_unlock(&mut);
-  return sum;
+  return ans;
 }
 
 void *ThreadSum(void *args) {
@@ -134,17 +142,25 @@ int main(int argc, char **argv) {
     args[i].begin = i * k / pnum;
     args[i].end = (i + 1) * k / pnum ;
     args[i].mod = mod;
+    pthread_mutex_lock(&mut);
     if (pthread_create(&threads[i], NULL, ThreadSum, (void *)&args[i])) {
       printf("Error: pthread_create failed!\n");
       return 1;
     }
+    pthread_mutex_unlock(&mut);
   }
 
   int total_sum = 1;
   for (uint32_t i = 0; i < pnum; i++) {
     int sum = 1;
     pthread_join(threads[i], (void **)&sum);
+    if(sum == 0){
+      sum=1;
+    }
     total_sum *= sum;
+    if(total_sum == 0){
+      total_sum=1;
+    }
   }
   if (total_sum % mod == 0) total_sum = 1;
   printf("total fact %d\n",total_sum % mod);
